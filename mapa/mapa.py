@@ -5,7 +5,7 @@ import cmath as cm
 import ply.lex as lex
 import ply.yacc as yacc
 
-import expression as exp
+import mapa.expression as exp
 
 
 class MaPa:
@@ -52,8 +52,7 @@ class MaPa:
     # default univariate functions for complex value mode
     def_complex_univar ={
         "phase":    cm.phase,
-        "polar":    cm.polar,
-        "rect":     cm.rect,
+        "abs":      abs,
         "exp":      cm.exp,
         "log":      cm.log,
         "log10":    cm.log10,
@@ -70,6 +69,7 @@ class MaPa:
     # default bivariate functions for complex value mode
     def_complex_bivar = {
         "log":      cm.log,
+        "rect":     cm.rect,
     }
     
     # default constant set
@@ -82,7 +82,7 @@ class MaPa:
     def __init__(self,
                  complex_mode = False,
                  allow_vars = True,
-                 allow_unknown = True,
+                 allow_unknown = False,
                  variables = {},
                  consts = None,
                  bivar = None,
