@@ -1,4 +1,4 @@
-<b><font size=7>Ma</font></b><font size=2>th</font><b><font size=7>Pa</font></b><font size=2>rser</font>
+<b><font size=7 color=red>Ma</font></b><font size=2>th</font><b><font size=7 color=red>Pa</font></b><font size=2>rser</font>
 
 ## Introduction
 
@@ -110,6 +110,7 @@ imaginary unit.
 >>> parser = MaPa(complex_mode=True)
 >>> parser.parse('e^(pi*1j)+1')
 1.2246467991473532e-16j
+```
 
 This is Euler's Identity (except for some numerical limitations of the
 Python complex numbers).
