@@ -1,4 +1,4 @@
-# MaPa -- MathParser
+# MaPa -- MathParser API
 
 ## Introduction
 
@@ -19,7 +19,7 @@ features:
   Essentially allowing the user to define functions that can be
   evaluated by the program.
 
-In addition to the API, MaPa also provides a stand-along command line
+In addition to the API, MaPa also provides a stand-alone command line
 calculator with the same feature set.
 
 
