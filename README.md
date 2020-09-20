@@ -38,7 +38,7 @@ The basic parsing operation is to create a `MaPa` object and call the
 `parse` method to parse strings.
 
 ```Python
->>> from mapa.parser import MaPa
+>>> from mapa import MaPa
 >>> parser = MaPa()  # default settings -- variables but no complex values
 >>> parser.parse('1+2*3**2')
 19 
