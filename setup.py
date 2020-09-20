@@ -23,7 +23,7 @@ setup(
         'ply'
     ],
     entry_points={
-        "console_scripts" : ["mapa-calc = mapa.mapa:main"]
+        "console_scripts" : ["mapa-calc = mapa.parser:main"]
     },
     classifiers=[
         'Environment :: Console',

@@ -8,16 +8,16 @@ features:
 
 - real-valued as well as complex-valued modes
 
-- math functions (most of the Python math library functions are
-  predefined, but program-supplied univariate and bivariate functions
-  can also be defined)
+- calls to math functions (most of the Python math library functions
+  are predefined, but custom univariate and bivariate functions can
+  also be supplied through the API)
 
 - support for predefined constants as well as user defined variables
   (can be disabled)
 
-- optional support for expressions with undefined variables
-  (essentially allowing the user to define functions that can be
-  evaluated by the program)
+- optional support for expressions with free (undefined) variables.
+  Essentially allowing the user to define functions that can be
+  evaluated by the program.
 
 In addition to the API, MaPa also provides a stand-along command line
 calculator with the same feature set.
@@ -38,7 +38,7 @@ The basic parsing operation is to create a `MaPa` object and call the
 `parse` method to parse strings.
 
 ```Python
->>> from mapa.mapa import MaPa
+>>> from mapa.parser import MaPa
 >>> parser = MaPa()  # default settings -- variables but no complex values
 >>> parser.parse('1+2*3**2')
 19 
@@ -46,13 +46,13 @@ The basic parsing operation is to create a `MaPa` object and call the
 
 MaPa supports the usual Python expression syntax, with a few additions:
 
-1. `^` can be used for powers in addition to Python's `**`
+1. `^` may be used for powers instead of Python's `**`
 2. MaPa has a root operator `%` that works both in unary and in binary form:
 
 ```Python
->>> parser.parse('%2')
+>>> parser.parse('%2')   # square root
 1.4142135623730951
->>> parser.parse('3%27')
+>>> parser.parse('3%27') # cube root
 3.0
 ```
 
@@ -89,14 +89,18 @@ MaPa can handle multi-line scripts
 ```
 
 Note that the final value is the result of the last expression in the
-sequence. It is also possible to use `;` as an expression separator,
-so if the user can only input one line, the above example can also be
-written as
+sequence. It is also possible to use `;` instead of a newline as an
+expression separator. So if the user can only input one line, the
+above example can also be written as
 
 ```Python
 >>> parser.parse('x = 1; y = 2; r = %(x^2+y^2); r+.1*r^2')
 2.73606797749979
 ```
+
+If the parser is called multiple times, the variables form the
+previous call persist (unless the Python program decides to change
+them deliberately).
 
 
 ## Complex Number Mode <a name="complex"></a>
@@ -112,7 +116,7 @@ imaginary unit.
 1.2246467991473532e-16j
 ```
 
-This is Euler's Identity (except for some numerical limitations of the
+This is Euler's Identity (except for some numerical limitations of
 Python complex numbers).
 
 The set of predefined functions in complex mode differs from that of
@@ -197,4 +201,4 @@ There are a few limitations and TODOs
 
 - MaPa is not thread safe. This is because it uses the PLY library as a parser, which in turn relies extensively on global state. It is possible to have multiple MaPa parsers in one program (e.g. one for real valued and one for complex numbers), but they cannot be used in multiple threads in parallel.
 
-- packaging and distribution needs some love. At the moment one can do a `pip` install, but it would be nice to have conda support and means of distribution.
+- packaging and distribution needs some love. At the moment one can do a `pip` install, but it would be nice to have conda support and other means of distribution.
