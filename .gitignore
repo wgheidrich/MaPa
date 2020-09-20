@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.out
+*~
+.ipynb_checkpoints
+mapa_lextab.py
+mapa_parsetab.py
