@@ -1,4 +1,4 @@
-# **Ma**<font size=2>th</font>**Pa**<font size=2>rser</font>
+# MaPa -- MathParser
 
 ## Introduction
 
