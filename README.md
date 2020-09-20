@@ -1,4 +1,4 @@
-<b><font size=7 color=red>Ma</font></b><font size=2>th</font><b><font size=7 color=red>Pa</font></b><font size=2>rser</font>
+# **Ma**<font size=2>th</font>**Pa**<font size=2>rser</font>
 
 ## Introduction
 
