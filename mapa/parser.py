@@ -395,6 +395,11 @@ def p_expr_var(t):
         else:
             raise(NameError('Unknown variable or constant '+t[1]))
 
+    # if the variable represents an expression, try to re-evaluate it
+    # with the current set of variables
+    if isinstance(t[0],exp.Expression):
+        t[0] = t[0].eval(mapars.variables)
+
     
 def p_error(t):
     raise(SyntaxError("Syntax error at '%s'" % t.value))

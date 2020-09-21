@@ -16,8 +16,8 @@ features:
   (can be disabled)
 
 - optional support for expressions with free (undefined) variables.
-  Essentially allowing the user to define functions that can be
-  evaluated by the program.
+  Essentially this allows the user to define crude functions that can
+  be evaluated by the program or further down in the user input.
 
 In addition to the API, MaPa also provides a stand-alone command line
 calculator with the same feature set.
@@ -44,7 +44,8 @@ The basic parsing operation is to create a `MaPa` object and call the
 19 
 ```
 
-MaPa supports the usual Python expression syntax, with a few additions:
+MaPa supports the usual Python expression syntax, with a few
+exceptions/additions:
 
 1. `^` may be used for powers instead of Python's `**`
 2. MaPa has a root operator `%` that works both in unary and in binary form:
@@ -165,8 +166,22 @@ This allows us to essentially treat the expression tree as a function:
 [1.0, 1.1743114854953163, 1.3472963553338606, 1.5176380902050415, 1.6840402866513373, 1.845236523481399, 2.0, 2.147152872702092, 2.2855752193730785, 2.414213562373095, 2.532088886237956, 2.6383040885779834, 2.732050807568877, 2.8126155740733, 2.879385241571817, 2.9318516525781364, 2.9696155060244163, 2.992389396183491, 3.0, 2.992389396183491, 2.9696155060244163, 2.9318516525781364, 2.879385241571817, 2.8126155740733, 2.7320508075688776, 2.638304088577984, 2.5320888862379562, 2.414213562373095, 2.285575219373079, 2.147152872702093, 2.0, 1.845236523481399, 1.6840402866513378, 1.517638090205042, 1.3472963553338606, 1.1743114854953172, 1.0000000000000002, 0.8256885145046842, 0.6527036446661391, 0.4823619097949593, 0.3159597133486627, 0.15476347651860145, -2.220446049250313e-16, -0.14715287270209165, -0.2855752193730785, -0.4142135623730949, -0.5320888862379558, -0.6383040885779832, -0.7320508075688767, -0.8126155740732994, -0.8793852415718164, -0.9318516525781366, -0.969615506024416, -0.9923893961834911, -1.0, -0.9923893961834911, -0.9696155060244163, -0.9318516525781364, -0.8793852415718171, -0.8126155740732997, -0.7320508075688772, -0.6383040885779836, -0.5320888862379562, -0.41421356237309537, -0.28557521937307917, -0.14715287270209276, -8.881784197001252e-16, 0.1547634765186, 0.3159597133486629, 0.48236190979495863, 0.6527036446661374, 0.8256885145046834]
 ```
 
-At the moment it is not possible to perform this sort of function
-evaluation and variable substitution directly in the MaPa syntax.
+If later on a quantity with free variables is used in another
+expression, it is automatically re-evaluated with the variables
+defined at that time. This allows for simple function-like behavior:
+
+```
+>>> parser.parse("f = sin(x)")
+<built-in function sin>(x)
+>>> parser.parse("x = 0 ; f")
+0.0
+>>> parser.parse("x = pi ; f")
+1.2246467991473532e-16
+>>> parser.parse("x = pi/2 ; f")
+1.0
+>>> parser.parse("x = pi/6 ; f")
+0.5
+```
 
 
 
@@ -177,19 +192,20 @@ the following command line parameters:
 
 - `--complex`: enable complex number mode
 - `--no-vars`: disable processing of variables
-- `--unknown`: enable parsing of expressions with undefined variables (this doesn't really have a good use at the moment other than debugging and checking the expression trees -- substitution of variables back into an expression is currently not supported from within the calculator syntax)
+- `--unknown`: enable parsing of expressions with undefined variables
 
 A simple example is shown below; the expression syntax is exactly as
 described above.
 
 ```Python
-sh% mapa-calc --unknown
+% mapa-calc --unknown
 Calculator
 > 1+2
 3
 > a= 2*sin(x)
 2*sin(x)
->
+> x= pi/6; a
+1.0
 ```
 
 
