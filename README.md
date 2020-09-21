@@ -95,11 +95,11 @@ expression separator. So if the user can only input one line, the
 above example can also be written as
 
 ```Python
->>> parser.parse('x = 1; y = 2; r = %(x^2+y^2); r+.1*r^2')
+>>> parser.parse('x = 1; y = 2; r = %(x^2+y^2); r2 = r+.1*r^2')
 2.73606797749979
 ```
 
-If the parser is called multiple times, the variables form the
+If the parser is called multiple times, the variables from the
 previous call persist (unless the Python program decides to change
 them deliberately).
 
@@ -108,7 +108,7 @@ them deliberately).
 
 Complex number mode can be switched on with a parameter in the
 constructor. This then allows the parsing of complex number literals
-int he same syntax as Python, with a `j` suffix indicating the
+in the same syntax as Python, with a `j` suffix indicating the
 imaginary unit.
 
 ```Python
@@ -213,8 +213,6 @@ Calculator
 
 There are a few limitations and TODOs
 
-- As mentioned above, MaPa does not currently have syntax for substituting values into expressions with free variables. I might add this at some point.
-
-- MaPa is not thread safe. This is because it uses the PLY library as a parser, which in turn relies extensively on global state. It is possible to have multiple MaPa parsers in one program (e.g. one for real valued and one for complex numbers), but they cannot be used in multiple threads in parallel.
+- MaPa is not thread safe. This is because it uses the PLY library as a parser, which in turn relies extensively on global state. It is possible to have multiple MaPa parsers in one program (e.g. one for real valued and one for complex numbers and with different variable sets), but they cannot be used in multiple threads in parallel.
 
 - packaging and distribution needs some love. At the moment one can do a `pip` install, but it would be nice to have conda support and other means of distribution.
