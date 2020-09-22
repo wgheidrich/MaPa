@@ -105,7 +105,7 @@ class VarExpr(Expression):
         Returns:
             dict of variable names
         '''
-        return {self.name : None}
+        return {self.name: None}
 
     def format(self, priority, readable=True):
         '''
@@ -132,8 +132,8 @@ class UniOpExpr(Expression):
     '''
 
     op_priorities = {
-        '-' : 3,
-        '%' : 7
+        '-': 3,
+        '%': 7
     }
 
     def __init__(self, op, operand):
@@ -220,12 +220,12 @@ class BinOpExpr(Expression):
     '''
 
     op_priorities = {
-        '+' : 0,
-        '-' : 1,  # higher than + so that a-(b+c) gets bracketed the right way
-        '*' : 3,
-        '/' : 4,  # same reason as -
-        '^' : 5,
-        '%' : 6
+        '+': 0,
+        '-': 1,  # higher than + so that a-(b+c) gets bracketed the right way
+        '*': 3,
+        '/': 4,  # same reason as -
+        '^': 5,
+        '%': 6
     }
 
     def __init__(self, op, operand1, operand2):

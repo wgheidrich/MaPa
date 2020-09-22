@@ -77,13 +77,13 @@ class MaPa:
     }
 
     def __init__(self,
-                 complex_mode = False,
-                 allow_vars = True,
-                 allow_unknown = False,
-                 variables = {},
-                 consts = None,
-                 bivar = None,
-                 univar = None):
+                 complex_mode=False,
+                 allow_vars=True,
+                 allow_unknown=False,
+                 variables={},
+                 consts=None,
+                 bivar=None,
+                 univar=None):
         '''
         Initialization
 
@@ -223,7 +223,7 @@ def t_NEWLINE(t):
 
 
 # A string containing ignored characters (spaces and tabs)
-t_ignore  = ' \t'
+t_ignore = ' \t'
 
 
 # Error handling rule
@@ -304,7 +304,7 @@ def p_expr_binop(t):
         t[0] = exp.BinOpExpr(t[2], t[1], t[3])
     else:
         # otherwise, evaluate directly
-        if t[2] == '+'  :
+        if t[2] == '+':
             t[0] = t[1] + t[3]
         elif t[2] == '-':
             t[0] = t[1] - t[3]
@@ -397,7 +397,7 @@ mapa_parser = yacc.yacc(optimize=1, tabmodule='mapa_parsetab')
 
 
 def main():
-    import readline
+    import readline  # noqa: F401 # flake8 can't detect that this is used
     import sys
     import argparse
 
@@ -413,9 +413,9 @@ def main():
                     help='switch off use of variables')
     args = ap.parse_args()
 
-    myparser = MaPa(complex_mode = args.complex_mode,
-                    allow_vars = args.allow_vars,
-                    allow_unknown = args.allow_unknown)
+    myparser = MaPa(complex_mode=args.complex_mode,
+                    allow_vars=args.allow_vars,
+                    allow_unknown=args.allow_unknown)
 
     print('Calculator')
     while True:
@@ -435,4 +435,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -1,0 +1,14 @@
+
+[flake8]
+
+exclude =
+    # auto-generated files
+    mapa/mapa_parsetab.py
+    mapa/mapa_lextab.py
+
+per-file-ignores =
+    # table-like formatting messes with rules for spaces
+    mapa/parser.py: E222
+    # unused imports
+    mapa/__init__.py: F401
+    mapa/__main__.py: F401

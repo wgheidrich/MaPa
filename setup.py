@@ -1,14 +1,13 @@
 from setuptools import setup, find_packages
 import sys
-from os import chdir
 
 with open('README.md') as f:
     readme = f.read()
 
 
-print('-'*50,file=sys.stderr)
-print("Packages:",find_packages(),file=sys.stderr)
-print('-'*50,file=sys.stderr)
+print('-'*50, file=sys.stderr)
+print("Packages:", find_packages(), file=sys.stderr)
+print('-'*50, file=sys.stderr)
 
 setup(
     name='MaPa',
@@ -23,7 +22,7 @@ setup(
         'ply'
     ],
     entry_points={
-        "console_scripts" : ["mapa-calc = mapa.parser:main"]
+        "console_scripts": ["mapa-calc = mapa.parser:main"]
     },
     classifiers=[
         'Environment :: Console',
@@ -36,5 +35,3 @@ setup(
     ],
     long_description=readme,
 )
-
-
