@@ -371,7 +371,7 @@ class UniFuncExpr(Expression):
             if isinstance(self.operand,Expression) else self.operand
 
         if isinstance(operand,Expression):
-            return UniFunExpr(self.op,self.name,self.func,operand)
+            return UniFuncExpr(self.name,self.func,operand)
         else:
             return self.func(operand)
 
@@ -394,7 +394,7 @@ class UniFuncExpr(Expression):
         format the expression as a string
 
         Parameters:
-            priority :  ignored for UniFunExpr
+            priority :  ignored for UniFuncExpr
 
             readable :  produce readable string vs. internal representation
 
@@ -449,7 +449,7 @@ class BinFuncExpr(Expression):
             if isinstance(self.operands[1],Expression) else self.operands[1]
         
         if isinstance(operand1,Expression) or isinstance(operand2,Expression):
-            return BinDuncExpr(self.name,self.func,operand1,operand2)
+            return BinFuncExpr(self.name,self.func,operand1,operand2)
         else:
             return func(operand1,operand2)
 

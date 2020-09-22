@@ -47,7 +47,7 @@ The basic parsing operation is to create a `MaPa` object and call the
 MaPa supports the usual Python expression syntax, with a few
 exceptions/additions:
 
-1. `^` may be used for powers instead of Python's `**`
+1. The LaTeX-style exponent operator `^` may be used instead of Python's `**`
 2. MaPa has a root operator `%` that works both in unary and in binary form:
 
 ```Python
@@ -57,8 +57,13 @@ exceptions/additions:
 3.0
 ```
 
-Most of the Python `math` library functions (or `cmath` functions in
-complex mode) are predefined.
+Note that `%` and `^` are used in Python for integer and logic
+operations, respectively. These are not supported data types for MaPa,
+so the operators are free to be used in the described fashion.
+
+Most of the float-valued Python `math` library functions (or
+complex-valued `cmath` functions in complex mode) are predefined by
+default.
 
 ```Python
 >>> parser.parse('atan2(1,2)')
@@ -192,10 +197,11 @@ the following command line parameters:
 
 - `--complex`: enable complex number mode
 - `--no-vars`: disable processing of variables
-- `--unknown`: enable parsing of expressions with undefined variables
+- `--unknown`: enable expressions with free (i.e. unknown) variables
 
-A simple example is shown below; the expression syntax is exactly as
-described above.
+The calculator reads lines from standard input and processes them with
+the `parse` method as described above.  A simple example is shown
+below, but the other examples from above can be used one-to-one.
 
 ```Python
 % mapa-calc --unknown
@@ -213,6 +219,12 @@ Calculator
 
 There are a few limitations and TODOs
 
-- MaPa is not thread safe. This is because it uses the PLY library as a parser, which in turn relies extensively on global state. It is possible to have multiple MaPa parsers in one program (e.g. one for real valued and one for complex numbers and with different variable sets), but they cannot be used in multiple threads in parallel.
+- MaPa is not thread safe. This is because it uses the PLY library as
+  a parser, which in turn relies extensively on global state. It is
+  possible to have multiple MaPa parsers in one program (e.g. one for
+  real valued and one for complex numbers and with different variable
+  sets), but they cannot be used in multiple threads in parallel.
 
-- packaging and distribution needs some love. At the moment one can do a `pip` install, but it would be nice to have conda support and other means of distribution.
+- packaging and distribution needs some love. At the moment one can do
+  a `pip` install, but it would be nice to have conda support and
+  other means of distribution.
