@@ -11,7 +11,7 @@ import mapa.expression as exp
 class MaPa:
     '''
     Math Parser
-    
+
     a class for parsing math expressions that supports
 
     - real and complex numbers
@@ -47,10 +47,9 @@ class MaPa:
         "atan2":    m.atan2,
         "log":      m.log,
     }
-    
-    
+
     # default univariate functions for complex value mode
-    def_complex_univar ={
+    def_complex_univar = {
         "phase":    cm.phase,
         "abs":      abs,
         "exp":      cm.exp,
@@ -65,19 +64,17 @@ class MaPa:
         "tan":      cm.tan,
     }
 
-    
     # default bivariate functions for complex value mode
     def_complex_bivar = {
         "log":      cm.log,
         "rect":     cm.rect,
     }
-    
+
     # default constant set
     constants = {
         "pi":       m.pi,
         "e":        m.e,
     }
-
 
     def __init__(self,
                  complex_mode = False,
@@ -86,49 +83,48 @@ class MaPa:
                  variables = {},
                  consts = None,
                  bivar = None,
-                 univar = None ):
+                 univar = None):
         '''
         Initialization
 
         Parameters:
-            - complex_mode :    whether to use real or complex numbers
-                                (default: False)
+            - complex_mode :   whether to use real or complex numbers
+                               (default: False)
 
-            - allow_vars :      whether allow userpdefined variables
-                                (default: True)
+            - allow_vars :     whether allow userpdefined variables
+                               (default: True)
 
-            - allow_unknown :   allow expressions with unknown variables that
-                                are returned as Expression objects
+            - allow_unknown :  allow expressions with unknown variables that
+                               are returned as Expression objects
 
-            - variables :       initial dictionary of variables (default: empty)
+            - variables :      initial dictionary of variables (default: empty)
 
-            - consts :          initial dictionary of constants
-                                (default: None, which means deafult constants)
+            - consts :         initial dictionary of constants
+                               (default: None, which means deafult constants)
 
-            - bivar :           list of bivariate functions
-                                (default: pi and e)
-        
-            - univar :          list of univariate functions (default: None)
-                                if None, the deault set will be chosen
-                                according to complex_mode
+            - bivar :          list of bivariate functions
+                               (default: pi and e)
+
+            - univar :         list of univariate functions (default: None)
+                               if None, the deault set will be chosen
+                               according to complex_mode
         '''
         self.is_complex = complex_mode
-        self.use_vars   = allow_vars
-        self.allow_unknown   = allow_unknown
-        self.variables  = variables
-        self.constants  = consts if consts != None else MaPa.constants
+        self.use_vars = allow_vars
+        self.allow_unknown = allow_unknown
+        self.variables = variables
+        self.constants = MaPa.constants if consts is None else consts
         if complex_mode:
-            self.bivar = bivar if bivar != None else MaPa.def_complex_bivar
-            self.univar = univar if univar != None else MaPa.def_complex_univar
+            self.bivar = MaPa.def_complex_bivar if bivar is None else bivar
+            self.univar = MaPa.def_complex_univar if univar is None else univar
         else:
-            self.bivar = bivar if bivar != None else MaPa.def_real_bivar
-            self.univar = univar if univar != None else MaPa.def_real_univar
+            self.bivar = MaPa.def_real_bivar if bivar is None else bivar
+            self.univar = MaPa.def_real_univar if univar is None else univar
 
-            
-    def parse(self,str):
+    def parse(self, str):
         '''
         parse a math expression from a string
-        
+
         Parameters:
             - str :     the math expression string
 
@@ -145,15 +141,13 @@ class MaPa:
         return result
 
 
-
 ###################################################################
 # This is the current MaPa instance usde for parsing
-# 
+#
 # (unfortunately global state due to the way PLY works)
 ###################################################################
 
 mapars = None
-
 
 
 #######
@@ -179,8 +173,6 @@ tokens = (
     'IDENTIFIER',
 )
 
-
-
 # single character tokens
 t_ASSIGN = r'='
 t_LPAR =   r'\('
@@ -188,7 +180,6 @@ t_RPAR =   r'\)'
 t_COMMA =  r','
 t_ADD =    r'\+'
 t_SUB =    r'-'
-#t_MUL =    r'\*'
 t_DIV =    r'/'
 t_EXP =    r'\^'
 t_ROOT =   r'%'
@@ -202,12 +193,13 @@ def t_MUL(t):
         t.value = '^'
     return t
 
+
 # variable/constant names and builtin functions
 def t_IDENTIFIER(t):
     r'[a-zA-Z_][a-zA-Z0-9_]*'
     return t
 
-## !!!! do complex number version
+
 def t_NUMBER(t):
     r'(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?j?'
     if t.value[-1] == 'j':
@@ -223,29 +215,25 @@ def t_NUMBER(t):
     return t
 
 
-#def t_comment(t):
-#    r'\#[^\n]*'
-#    pass
-
 # Define a rule so we can track line numbers
 def t_NEWLINE(t):
     r'[;\n]+'
     t.lexer.lineno += len(t.value)
     return t
-    
+
+
 # A string containing ignored characters (spaces and tabs)
 t_ignore  = ' \t'
 
+
 # Error handling rule
 def t_error(t):
-    raise(SyntaxError("Illegal character:\n  \"... "+t.value[0:10]+"...\"\n       ^"))
-    
+    raise(SyntaxError("Illegal character:\n  \"... " +
+                      t.value[0:10] + "...\"\n       ^"))
+
 
 # Build the lexer
-mapa_lexer = lex.lex(optimize=1,lextab='mapa_lextab')
-
-
-
+mapa_lexer = lex.lex(optimize=1, lextab='mapa_lextab')
 
 
 ##########
@@ -254,19 +242,20 @@ mapa_lexer = lex.lex(optimize=1,lextab='mapa_lextab')
 
 
 precedence = (
-    ('left','ADD','SUB'),
-    ('left','MUL','DIV'),
-    ('right','UMINUS'),
-    ('left','EXP','ROOT'),
-    ('right','UROOT')
+    ('left', 'ADD', 'SUB'),
+    ('left', 'MUL', 'DIV'),
+    ('right', 'UMINUS'),
+    ('left', 'EXP', 'ROOT'),
+    ('right', 'UROOT')
 )
+
 
 def p_lineseq(t):
     '''
     lines : lines NEWLINE line
           | line
     '''
-    if len(t) == 4 and t[3] != None:
+    if len(t) == 4 and not t[3] is None:
         t[0] = t[3]
     else:
         t[0] = t[1]
@@ -299,9 +288,8 @@ def p_statement_assign(t):
         else:
             t[0] = t[1]
             mapars.variables[t[1]] = t[1]
-            
 
-    
+
 def p_expr_binop(t):
     '''
     expr : expr ADD expr
@@ -311,9 +299,9 @@ def p_expr_binop(t):
     expr : expr EXP expr
     expr : expr ROOT expr
     '''
-    if isinstance(t[1],exp.Expression) or isinstance(t[3],exp.Expression):
+    if isinstance(t[1], exp.Expression) or isinstance(t[3], exp.Expression):
         # dealing with partially defined expression -- create expression tree
-        t[0] = exp.BinOpExpr(t[2],t[1],t[3])
+        t[0] = exp.BinOpExpr(t[2], t[1], t[3])
     else:
         # otherwise, evaluate directly
         if t[2] == '+'  :
@@ -327,47 +315,47 @@ def p_expr_binop(t):
         elif t[2] == '^':
             t[0] = t[1] ** t[3]
         elif t[2] == '%':
-            t[0] = t[3] ** (1/t[1])
+            t[0] = t[3] ** (1 / t[1])
 
 
 def p_expr_uminus(t):
     'expr : SUB expr %prec UMINUS'
-    if isinstance(t[2],exp.Expression):
-        t[0] = exp.UniOpExpr(t[1],t[2])
+    if isinstance(t[2], exp.Expression):
+        t[0] = exp.UniOpExpr(t[1], t[2])
     else:
         t[0] = -t[2]
 
-        
+
 def p_expr_uroot(t):
     'expr : ROOT expr %prec UROOT'
-    if isinstance(t[2],exp.Expression):
-        t[0] = exp.UniOpExpr(t[1],t[2])
+    if isinstance(t[2], exp.Expression):
+        t[0] = exp.UniOpExpr(t[1], t[2])
     else:
         t[0] = t[2] ** 0.5
 
-        
+
 def p_expr_univar(t):
     'expr : IDENTIFIER LPAR expr RPAR'
     try:
         func = mapars.univar[t[1]]
     except KeyError:
-        raise(NameError("Unknown univariate function "+t[1]))
-    if isinstance(t[3],exp.Expression):
-        t[0] = exp.UniFuncExpr(t[1],func,t[3])
+        raise(NameError("Unknown univariate function " + t[1]))
+    if isinstance(t[3], exp.Expression):
+        t[0] = exp.UniFuncExpr(t[1], func, t[3])
     else:
         t[0] = func(t[3])
 
-    
+
 def p_expr_bivar(t):
     'expr : IDENTIFIER LPAR expr COMMA expr RPAR'
     try:
         func = mapars.bivar[t[1]]
     except KeyError:
-        raise(NameError("Unknown biivariate function "+t[1]))
-    if isinstance(t[3],exp.Expression) or isinstance(t[5],exp.Expression):
-        t[0] = exp.UniFuncExpr(t[1],func,t[3],t[5])
+        raise(NameError("Unknown biivariate function " + t[1]))
+    if isinstance(t[3], exp.Expression) or isinstance(t[5], exp.Expression):
+        t[0] = exp.UniFuncExpr(t[1], func, t[3], t[5])
     else:
-        t[0] = func(t[3],t[5])
+        t[0] = func(t[3], t[5])
 
 
 def p_expr_group(t):
@@ -385,27 +373,27 @@ def p_expr_const(t):
 
 def p_expr_var(t):
     'expr : IDENTIFIER'
-    t[0] = mapars.variables.get(t[1],None)
-    if t[0] == None:
-        t[0] = mapars.constants.get(t[1],None)
+    t[0] = mapars.variables.get(t[1], None)
+    if t[0] is None:
+        t[0] = mapars.constants.get(t[1], None)
 
-    if t[0] == None:
+    if t[0] is None:
         if mapars.allow_unknown:
             t[0] = exp.VarExpr(t[1])
         else:
-            raise(NameError('Unknown variable or constant '+t[1]))
+            raise(NameError('Unknown variable or constant ' + t[1]))
 
     # if the variable represents an expression, try to re-evaluate it
     # with the current set of variables
-    if isinstance(t[0],exp.Expression):
+    if isinstance(t[0], exp.Expression):
         t[0] = t[0].eval(mapars.variables)
 
-    
+
 def p_error(t):
     raise(SyntaxError("Syntax error at '%s'" % t.value))
 
 
-mapa_parser = yacc.yacc(optimize=1,tabmodule='mapa_parsetab')
+mapa_parser = yacc.yacc(optimize=1, tabmodule='mapa_parsetab')
 
 
 def main():
@@ -424,11 +412,11 @@ def main():
                     action='store_const', const=False, default=True,
                     help='switch off use of variables')
     args = ap.parse_args()
-    
+
     myparser = MaPa(complex_mode = args.complex_mode,
                     allow_vars = args.allow_vars,
                     allow_unknown = args.allow_unknown)
-    
+
     print('Calculator')
     while True:
         try:
@@ -437,11 +425,11 @@ def main():
             break
         try:
             result = myparser.parse(s)
-            if result != None:
+            if result is not None:
                 print(result)
         except Exception as e:
-            print("Error:",e,file=sys.stderr)
-    
+            print("Error:", e, file=sys.stderr)
+
     print("\nGoodbye...")
 
 

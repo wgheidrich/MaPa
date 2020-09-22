@@ -10,13 +10,12 @@ class Expression:
         'initialization'
         pass
 
-    
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         Evaluate parse tree
-        
+
         Must be implemented by subclasses
-        
+
         Parameters:
             vars :      dictionary of variables and their values
 
@@ -26,34 +25,34 @@ class Expression:
             OR     a new (simplified) parse tree with the provided variables
                    subsituted for their values, and then simplified
         '''
-        raise(NotImplemented)
+        raise(NotImplementedError)
 
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names (with value None)
         '''
-        raise(NotImplemented)
-    
-    def format(self,priority,readable=True):
+        raise(NotImplementedError)
+
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
         must be implemented by subclasses
-        
+
         Parameters:
             priority : priority level of the parent operator (determines the
                        use of brackets
-        
+
             readable : produce readable string vs. internal representation
 
         Returns:
             string representation
         '''
-        raise(NotImplemented)
-        
+        raise(NotImplementedError)
+
     def __str__(self):
         '''
         string conversion
@@ -63,11 +62,10 @@ class Expression:
     def __repr__(self):
         '''
         representation
-        
+
         same as string but always fully bracketed
         '''
-        return self.format(0,False)
-
+        return self.format(0, False)
 
 
 class VarExpr(Expression):
@@ -75,44 +73,41 @@ class VarExpr(Expression):
     Expression node for a variable
     '''
 
-    def __init__(self,name):
+    def __init__(self, name):
         '''
         Initialization
-        
+
         Parameters:
             name :      the name of the variable
         '''
         self.name = name
 
-    
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         Evaluate variable
-        
+
         If the the name of this variable is in th eprovided variable list,
         it is substituted for its value and returned. Otherwise, self is
         returned unaltered.
-       
+
         Parameters:
             vars :      dictionary of variables and their values
 
         Returns:
             EITHER value or SELF
         '''
-        return vars.get(self.name,self)
+        return vars.get(self.name, self)
 
-    
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names
         '''
         return {self.name : None}
 
-    
-    def format(self,priority,readable=True):
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
@@ -127,40 +122,39 @@ class VarExpr(Expression):
         '''
         return self.name
 
-    
+
 class UniOpExpr(Expression):
     '''
     Unary Operator Expression
-    
+
     one of the operators - or %
     (where % denotes the square root, as in %a is the square root of a)
     '''
-    
+
     op_priorities = {
         '-' : 3,
         '%' : 7
     }
 
-    def __init__(self,op,operand):
+    def __init__(self, op, operand):
         '''
         Initialization
-        
+
         Parameters:
             op :        string of the operator symbol (see list above)
-        
+
             operand :   operand (node of class Expression or value)
         '''
         if op in UniOpExpr.op_priorities.keys():
             self.op = op
         else:
-            raise NotImplementedError("Unknown operator "+op)
+            raise NotImplementedError("Unknown operator " + op)
         self.operand = operand
 
-        
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         evaluate unary operator
-        
+
         recursively evaluate the operand and apply operator
 
         Parameters:
@@ -171,32 +165,30 @@ class UniOpExpr(Expression):
             fully defined
         '''
         operand = self.operand.eval(vars)\
-            if isinstance(self.operand,Expression) else self.operand
-        
-        if isinstance(operand,Expression):
-            return UniOpExpr(self.op,operand)
+            if isinstance(self.operand, Expression) else self.operand
+
+        if isinstance(operand, Expression):
+            return UniOpExpr(self.op, operand)
         elif self.op == '-':
             return - operand
         elif self.op == '%':
             return operand ** 0.5
         # we shouldn't really get here, since this is checked in __init__
-        raise NotImplementedError("Unknown operator "+op)
-
+        raise NotImplementedError("Unknown operator " + self.op)
 
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names
         '''
-        if isinstance(self.operand,Expression):
+        if isinstance(self.operand, Expression):
             return self.operand.get_undefined()
         else:
             return {}
 
-        
-    def format(self,priority,readable=True):
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
@@ -208,21 +200,21 @@ class UniOpExpr(Expression):
             readable :  produce readable string vs. internal representation
 
         Returns:
-            variable name as string 
+            variable name as string
         '''
-        if isinstance(self.operand,Expression):
+        if isinstance(self.operand, Expression):
             estr = self.operand.format(UniOpExpr.op_priorities[self.op],
                                        readable)
         else:
             estr = str(self.operand)
-        return '('+self.op+estr+')' if not readable or\
-            priority > UniOpExpr.op_priorities[self.op] else self.op+estr
+        return '(' + self.op + estr + ')' if not readable or\
+            priority > UniOpExpr.op_priorities[self.op] else self.op + estr
 
-        
+
 class BinOpExpr(Expression):
     '''
     Binary Operator Expression
-    
+
     one of the operators +,-,*,/,^, or %
     (where % denotes the root, as in 3%a is the cube root of a)
     '''
@@ -235,13 +227,13 @@ class BinOpExpr(Expression):
         '^' : 5,
         '%' : 6
     }
-    
-    def __init__(self,op,operand1,operand2):
+
+    def __init__(self, op, operand1, operand2):
         '''
         Initialization
-        
+
         Parameters:
-            op :        string of the operator name (one of the ones listed 
+            op :        string of the operator name (one of the ones listed
 
             operand1 :  first operand (node of class Expression or value)
 
@@ -250,30 +242,30 @@ class BinOpExpr(Expression):
         if op in BinOpExpr.op_priorities.keys():
             self.op = op
         else:
-            raise NotImplementedError("Unknown operator "+op)
-        self.operands = (operand1,operand2)
+            raise NotImplementedError("Unknown operator " + op)
+        self.operands = (operand1, operand2)
 
-
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         evaluate binary operator
-        
+
         recursively evaluate the operands and apply operator
 
         Parameters:
             vars :      dictionary of variables and their values
-        
+
         Returns:
             either a value, or new Expression if the operands are not
             fully defined
         '''
         operand1 = self.operands[0].eval(vars)\
-            if isinstance(self.operands[0],Expression) else self.operands[0]
+            if isinstance(self.operands[0], Expression) else self.operands[0]
         operand2 = self.operands[1].eval(vars)\
-            if isinstance(self.operands[1],Expression) else self.operands[1]
-        
-        if isinstance(operand1,Expression) or isinstance(operand2,Expression):
-            return BinOpExpr(self.op,operand1,operand2)
+            if isinstance(self.operands[1], Expression) else self.operands[1]
+
+        if isinstance(operand1, Expression) or \
+           isinstance(operand2, Expression):
+            return BinOpExpr(self.op, operand1, operand2)
         elif self.op == '+':
             return operand1 + operand2
         elif self.op == '-':
@@ -285,27 +277,25 @@ class BinOpExpr(Expression):
         elif self.op == '^':
             return operand1 ** operand2
         elif self.op == '%':
-            return operand2 ** (1/operand1)
+            return operand2 ** (1 / operand1)
         # we shouldn't really get here, since this is checked in __init__
-        raise NotImplementedError("Unknown operator "+op)
+        raise NotImplementedError("Unknown operator " + self.op)
 
-    
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names
         '''
         v1 = self.operands[0].get_undefined()\
-            if isinstance(self.operands[0],Expression) else {}
+            if isinstance(self.operands[0], Expression) else {}
         v2 = self.operands[1].get_undefined()\
-            if isinstance(self.operands[1],Expression) else {}
+            if isinstance(self.operands[1], Expression) else {}
         v1.update(v2)
         return v1
 
-
-    def format(self,priority,readable=True):
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
@@ -317,20 +307,20 @@ class BinOpExpr(Expression):
             readable :  produce readable string vs. internal representation
 
         Returns:
-            variable name as string 
+            variable name as string
         '''
-        if isinstance(self.operands[0],Expression):
+        if isinstance(self.operands[0], Expression):
             estr = self.operands[0].format(BinOpExpr.op_priorities[self.op],
                                            readable)
         else:
             estr = str(self.operands[0])
         estr += self.op
-        if isinstance(self.operands[1],Expression):
+        if isinstance(self.operands[1], Expression):
             estr += self.operands[1].format(BinOpExpr.op_priorities[self.op],
                                             readable)
         else:
             estr += str(self.operands[1])
-        return '('+estr+')' if not readable or\
+        return '(' + estr + ')' if not readable or\
             priority > BinOpExpr.op_priorities[self.op] else estr
 
 
@@ -338,11 +328,11 @@ class UniFuncExpr(Expression):
     '''
     Uivariate Function Expression
     '''
-    
-    def __init__(self,name,func,operand):
+
+    def __init__(self, name, func, operand):
         '''
         Initialization
-        
+
         Parameters:
             name :      name of the function for string representations
 
@@ -354,42 +344,39 @@ class UniFuncExpr(Expression):
         self.func = func
         self.operand = operand
 
-        
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         evaluate unary operator
-        
+
         recursively evaluate the operand and apply operator
 
         Parameters:
             vars :      dictionary of variables and their values
-        
+
         Returns:
             either a value, or self if the operand is not fully defined
         '''
         operand = self.operand.eval(vars)\
-            if isinstance(self.operand,Expression) else self.operand
+            if isinstance(self.operand, Expression) else self.operand
 
-        if isinstance(operand,Expression):
-            return UniFuncExpr(self.name,self.func,operand)
+        if isinstance(operand, Expression):
+            return UniFuncExpr(self.name, self.func, operand)
         else:
             return self.func(operand)
-
 
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names
         '''
-        if isinstance(self.operand,Expression):
+        if isinstance(self.operand, Expression):
             return self.operand.get_undefined()
         else:
             return {}
 
-
-    def format(self,priority,readable=True):
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
@@ -401,22 +388,21 @@ class UniFuncExpr(Expression):
         Returns:
             string with function call syntax
         '''
-        if isinstance(self.operand,Expression):
-            estr = self.operand.format(0,readable)
+        if isinstance(self.operand, Expression):
+            estr = self.operand.format(0, readable)
         else:
             estr = str(self.operand)
-        return (self.name if readable else str(self.func))+'('+estr+')'
+        return (self.name if readable else str(self.func)) + '(' + estr + ')'
 
 
-        
 class BinFuncExpr(Expression):
     '''
     Bivariate Function Expression
     '''
-    def __init__(self,name,func,operand1,operand2):
+    def __init__(self, name, func, operand1, operand2):
         '''
         Initialization
-        
+
         Parameters:
             name :      name of the function for string representations
 
@@ -428,48 +414,46 @@ class BinFuncExpr(Expression):
         '''
         self.name = name
         self.func = func,
-        self.operands = (operand1,operand2)
+        self.operands = (operand1, operand2)
 
-
-    def eval(self,vars):
+    def eval(self, vars):
         '''
         evaluate binary operator
-        
+
         recursively evaluate the operands and apply operator
 
         Parameters:
             vars :      dictionary of variables and their values
-        
+
         Returns:
             either a value, or self if the operand is not fully defined
         '''
         operand1 = self.operands[0].eval(vars)\
-            if isinstance(self.operands[0],Expression) else self.operands[0]
+            if isinstance(self.operands[0], Expression) else self.operands[0]
         operand2 = self.operands[1].eval(vars)\
-            if isinstance(self.operands[1],Expression) else self.operands[1]
-        
-        if isinstance(operand1,Expression) or isinstance(operand2,Expression):
-            return BinFuncExpr(self.name,self.func,operand1,operand2)
-        else:
-            return func(operand1,operand2)
+            if isinstance(self.operands[1], Expression) else self.operands[1]
 
-    
+        if isinstance(operand1, Expression) or \
+           isinstance(operand2, Expression):
+            return BinFuncExpr(self.name, self.func, operand1, operand2)
+        else:
+            return self.func(operand1, operand2)
+
     def get_undefined(self):
         '''
         return dict of undefined variables by recursively traversing the tree
-        
+
         Returns:
             dict of variable names
         '''
         v1 = self.operands[0].get_undefined()\
-            if isinstance(self.operands[0],Expression) else {}
+            if isinstance(self.operands[0], Expression) else {}
         v2 = self.operands[1].get_undefined()\
-            if isinstance(self.operands[1],Expression) else {}
+            if isinstance(self.operands[1], Expression) else {}
         v1.update(v2)
         return v1
 
-
-    def format(self,priority,readable=True):
+    def format(self, priority, readable=True):
         '''
         format the expression as a string
 
@@ -481,47 +465,43 @@ class BinFuncExpr(Expression):
         Returns:
             string with function call syntax
         '''
-        if isinstance(self.operands[0],Expression):
-            estr1 = self.operands[0].format(0,readable)
+        if isinstance(self.operands[0], Expression):
+            estr1 = self.operands[0].format(0, readable)
         else:
             estr1 = str(self.operands[0])
-        if isinstance(self.operands[1],Expression):
-            estr2 += self.operands[1].format(0,readable)
+        if isinstance(self.operands[1], Expression):
+            estr2 = self.operands[1].format(0, readable)
         else:
-            estr2 += str(self.operands[1])
-        return (self.name if readable else str(self.func))+'('+estr1+','+estr2+')'
+            estr2 = str(self.operands[1])
+        return (self.name if readable else str(self.func)) + \
+            '(' + estr1 + ',' + estr2 + ')'
 
 
 def __test__():
     import math as m
-    
+
     expr = BinOpExpr('+',
                      BinOpExpr('-',
                                1,
                                UniFuncExpr("cos",
                                            m.cos,
-                                           BinOpExpr('/',m.pi,3)
-                               )
-                     ),
+                                           BinOpExpr('/', m.pi, 3))),
                      BinOpExpr('*',
                                VarExpr("x"),
-                               VarExpr("y")
-                               )
-    )
+                               VarExpr("y")))
 
     title = "Expression Tree Example"
-    print('\n'+title+'\n'+'='*len(title)+'\n')
+    print('\n' + title + '\n' + '=' * len(title) + '\n')
     print("Undefined vars:\t", expr.get_undefined())
     print("Internal repr.:\t", expr.__repr__())
-    print("Readable repr:\t",expr)
+    print("Readable repr:\t", expr)
     eval = expr.eval({})
-    print("Simplified:\t",eval)
-    evalx = eval.eval({"x":1})
-    print("x = 1:\t\t",evalx)
-    evaly = eval.eval({"x":1,"y":2})
-    print("x = 1, y = 2:\t",evaly)
+    print("Simplified:\t", eval)
+    evalx = eval.eval({"x": 1})
+    print("x = 1:\t\t", evalx)
+    evaly = eval.eval({"x": 1, "y": 2})
+    print("x = 1, y = 2:\t", evaly)
     print()
-    
 
 
 if __name__ == '__main__':
